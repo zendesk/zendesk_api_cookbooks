@@ -1,0 +1,6 @@
+<form action="/users/<%= @user.id %>" method="post" accept-charset="utf-8">
+  <input name="_method" type="hidden" value="put" />
+  <p>Title: <input type="text" name="user[user_name]" value="<%= @user.user_name %>" id="user[user_name]" /></p>
+  <p>Phone Number: <input type="text" name="user[phone_number]" id="user[phone_number]" /></p>
+  <p><input type="submit" value="Update user" /></p>
+</form>
