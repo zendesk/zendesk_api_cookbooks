@@ -28,14 +28,16 @@ emails.each do |email|
       puts "Ticket created."
     else
       puts "Ticket creation failed for #{email}."
+      not_found << email
     end
   else
     puts "#{email} not found!"
-    not_found << email
+
     if client.tickets.create(:requester => {:email => email, :name => email}, :subject => "Your ticket subject", :comment => { :value => Message, :author_id => me.id }, :group_id => 123456, :assignee_id => 87654321, :priority => "normal", :status => "solved", :type => "incident", :tags => ["proactive"])
       puts "Not found email user created and ticket sent."
     else
       puts "User not found, email not sent, and user not created"
+      not_found << email
     end
   end
 end
