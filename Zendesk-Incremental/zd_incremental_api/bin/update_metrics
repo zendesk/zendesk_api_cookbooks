@@ -8,7 +8,6 @@ require 'dotenv'
 Dotenv.load
 
 start_time = 0
-counter = 0
 next_page = true
 
 client = ZendeskAPI::Client.new do |config|
@@ -27,26 +26,26 @@ client = ZendeskAPI::Client.new do |config|
   config.logger = Logger.new(STDOUT)
 end
 
-tickets = ZendeskAPI::Ticket.incremental_export(client, start_time)
+Thread.new{get_metrics}
 
-while next_page
-  tickets.each do |ticket|
-    # search for tickets and update their values if found
-    if MyApp::Ticket.get(ticket_id: ticket.id)
-      ticket.update(wait_time: ticket.requester_wait_time_in_minutes,
-                    reply_time: ticket.reply_time_in_minutes,
-                    resolution_time: ticket.full_resolution_time_in_minutes)
-    else
-      MyApp::Ticket.create(ticket_id: ticket.id,
-                            wait_time: ticket.requester_wait_time_in_minutes,
-                            reply_time: ticket.reply_time_in_minutes,
-                            resolution_time: ticket.full_resolution_time_in_minutes)
+def get_metrics
+  tickets = ZendeskAPI::Ticket.incremental_export(client, start_time)
+
+  while next_page
+    tickets.each do |ticket|
+      # search for tickets and update their values if found
+      if MyApp::Ticket.get(ticket_id: ticket.id)
+        ticket.update(wait_time: ticket.requester_wait_time_in_minutes,
+                      reply_time: ticket.reply_time_in_minutes,
+                      resolution_time: ticket.full_resolution_time_in_minutes)
+      else
+        MyApp::Ticket.create(ticket_id: ticket.id,
+                              wait_time: ticket.requester_wait_time_in_minutes,
+                              reply_time: ticket.reply_time_in_minutes,
+                              resolution_time: ticket.full_resolution_time_in_minutes)
+      end
     end
+    tickets.next
   end
-  # compute averages based on field and store in averages table
-  MyApp::Average.create(wait_time: MyApp::Ticket.avg(:wait_time),
-                        reply_time: MyApp::Ticket.avg(:reply_time),
-                        resolution_time: MyApp::Ticket.avg(:resolution_time)
-  tickets.next
 end
 
