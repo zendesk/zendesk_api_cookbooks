@@ -1,9 +1,10 @@
 source 'https://rubygems.org'
 
-ruby '2.1.0'
+ruby '2.0.0'
 
 gem 'datamapper'
 gem "dm-postgres-adapter"
 gem 'zendesk_api'
 gem 'pg'
 gem 'dotenv'
+gem 'sinatra'
