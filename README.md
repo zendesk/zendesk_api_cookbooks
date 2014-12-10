@@ -5,7 +5,7 @@ Best Practices
 --------------
 
 * Please remember to remove any tokens/username informations from your example scripts.
-* Pull requests are welcome. Please enclose examples with their own readme files in a separate directories.
+* Pull requests are welcome. Please enclose examples with their own readme files in a separate directory.
 
 Important Note
 --------------
